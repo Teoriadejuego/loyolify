@@ -51,14 +51,14 @@ create_conflicto_cohesion <- function(df){
   dfsoc[variable == 'social__amigos', variable := 'cohesión']
   dfsoc[variable == 'social__no_amigos', variable := 'conflicto']
   dfsoc[variable == 'cohesión' &  n ==0, y:= 0]
-  dfsoc[variable == 'cohesión' &  n >0 & n<6, y:= 1]
-  dfsoc[variable == 'cohesión' &  n >=6 & n<11, y:= 2]
-  dfsoc[variable == 'cohesión' &  n >=11 , y:= 3]
+  dfsoc[variable == 'cohesión' &  n >0 & n<10, y:= 1]
+  dfsoc[variable == 'cohesión' &  n >=10 & n<15, y:= 2]
+  dfsoc[variable == 'cohesión' &  n >=15 , y:= 3]
   
   dfsoc[variable == 'conflicto' &  n ==0, y:= 0]
   dfsoc[variable == 'conflicto' &  n==1, y:= 1]
-  dfsoc[variable == 'conflicto' &  n >1 & n<4, y:= 2]
-  dfsoc[variable == 'conflicto' &  n >4 , y:= 3]
+  dfsoc[variable == 'conflicto' &  n >1 & n<8, y:= 2]
+  dfsoc[variable == 'conflicto' &  n >8 , y:= 3]
   df[, c('usuario_id', 'alumno_id'), with=F]
   unique(df[, c('alumno_id', 'usuario_id'), with=F]) %>% 
     merge(dfsoc, by = c('usuario_id'), all.y = T) %>% 
