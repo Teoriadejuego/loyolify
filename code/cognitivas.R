@@ -7,7 +7,7 @@ create_autocontrol  <- function(df){
                 'adivinanzas__biblioteca', 
                 'adivinanzas__padre')
   dt_ok <- data.table::data.table(variable = variables, 
-                                  ok = c('1','24', 'junio'))
+                                  ok = c('2','47', 'emilia'))
   df[, c(key, variables), with=F] %>% 
     melt(key) %>% 
     .[, value := tolower(as.character(value))] %>%
@@ -15,7 +15,7 @@ create_autocontrol  <- function(df){
     .[, n:= as.integer(value == ok)] %>% 
     .[is.na(n), n := 0] %>% 
     .[, .(variable = 'autocontrol', n = sum(n)), by=key] %>% 
-    .[, y := 3-n] %>% 
+    .[, y := n] %>% 
     .[, -c('n')] %>% .[]
 }
 
