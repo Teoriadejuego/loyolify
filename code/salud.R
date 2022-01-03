@@ -86,7 +86,7 @@ create_relacional <- function(df){
   nmax = max(dt$n, na.rm = T)
   nmin = min(dt$n, na.rm = T)
   dt[, npct := (n-nmin) / (nmax - nmin)]
-  dt[, y:= fcase(npct<=0.25, 0, npct>0.25 & npct<=0.5, 1, npct>0.5 & npct<0.75, 2, npct>0.75, 3)]
+  dt[, y:= fcase(npct<=0.50, 0, npct>0.5 & npct<=0.75, 1, npct>0.75 & npct<0.85, 2, npct>0.85, 3)]
   unique(dt[, c(key, 'y'), with=F]) %>% 
     merge( df[, c(key, 'alumno_id'), with=F], by = key, all.x = T) %>% 
     .[, variable := 'relacional'] %>% 
