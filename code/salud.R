@@ -16,10 +16,10 @@ create_animo <- function(df){
     .[, n:= as.integer(value) - 1] %>% 
     .[variable == 'estado_animo__solo', n:= 4-n] %>% 
     .[, .(n=sum(n, na.rm = T)/12), by=key] %>% 
-    .[, y := fcase(n<0.6, 0, 
-                   n>=0.6 & n<0.85, 1, 
-                   n>0.85 & n<0.99, 2, 
-                   n>=0.99, 3)] %>% 
+    .[, y := fcase(n<0.4, 0, 
+                   n>=0.4 & n<0.75, 1, 
+                   n>0.75 & n<0.95, 2, 
+                   n>=0.95, 3)] %>% 
     .[, variable := 'anímica'] %>% 
     .[, c(key, 'variable', 'y'), with=F] %>% 
     unique()
@@ -86,7 +86,7 @@ create_relacional <- function(df){
   nmax = max(dt$n, na.rm = T)
   nmin = min(dt$n, na.rm = T)
   dt[, npct := (n-nmin) / (nmax - nmin)]
-  dt[, y:= fcase(npct<=0.25, 0, npct>0.25 & npct<=0.5, 1, npct>0.5 & npct<0.75, 2, npct>0.75, 3)]
+  dt[, y:= fcase(npct<=0.50, 0, npct>0.5 & npct<=0.75, 1, npct>0.75 & npct<0.85, 2, npct>0.85, 3)]
   unique(dt[, c(key, 'y'), with=F]) %>% 
     merge( df[, c(key, 'alumno_id'), with=F], by = key, all.x = T) %>% 
     .[, variable := 'relacional'] %>% 
