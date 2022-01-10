@@ -16,10 +16,10 @@ create_animo <- function(df){
     .[, n:= as.integer(value) - 1] %>% 
     .[variable == 'estado_animo__solo', n:= 4-n] %>% 
     .[, .(n=sum(n, na.rm = T)/12), by=key] %>% 
-    .[, y := fcase(n<0.6, 0, 
-                   n>=0.6 & n<0.85, 1, 
-                   n>0.85 & n<0.99, 2, 
-                   n>=0.99, 3)] %>% 
+    .[, y := fcase(n<quantile(n, c(0.20),na.rm=T), 0, 
+                   n>=quantile(n, c(0.20),na.rm=T) & n<quantile(n, c(0.50),na.rm=T), 1, 
+                   n>quantile(n, c(0.50),na.rm=T) & n<quantile(n, c(0.80),na.rm=T), 2, 
+                   n>=quantile(n, c(0.80),na.rm=T), 3)] %>% 
     .[, variable := 'anímica'] %>% 
     .[, c(key, 'variable', 'y'), with=F] %>% 
     unique()
@@ -49,10 +49,10 @@ create_alimenticia <- function(df){
   dt[variable == 'comida__rapida', n := fcase(value_int == 4, 0, value_int==5, 2, value_int==6, 1)]
   by = setdiff(names(dt), c('variable', 'value', 'value_int','correct', 'n'))
   dt = dt[, .(n = sum(n, na.rm = T)/10), by = by] 
-  dt[n<0.45, y:= 0]
-  dt[n>=0.45 & n<=0.65, y:= 1]
-  dt[n>=0.65 & n<0.85, y:= 2]
-  dt[n>=0.85, y:= 3]
+  dt[n<quantile(n, c(0.20),na.rm=T), y:= 0]
+  dt[n>=quantile(n, c(0.20),na.rm=T) & n<=quantile(n, c(0.50),na.rm=T), y:= 1]
+  dt[n>=quantile(n, c(0.50),na.rm=T) & n<quantile(n, c(0.80),na.rm=T), y:= 2]
+  dt[n>=quantile(n, c(0.80),na.rm=T), y:= 3]
   dt[, variable := 'alimenticia']
   dt[, c(key, 'variable', 'y'), with=F] %>% unique
 }
@@ -86,7 +86,7 @@ create_relacional <- function(df){
   nmax = max(dt$n, na.rm = T)
   nmin = min(dt$n, na.rm = T)
   dt[, npct := (n-nmin) / (nmax - nmin)]
-  dt[, y:= fcase(npct<=0.25, 0, npct>0.25 & npct<=0.5, 1, npct>0.5 & npct<0.75, 2, npct>0.75, 3)]
+  dt[, y:= fcase(npct<=quantile(npct, c(0.20),na.rm=T), 0, npct>quantile(npct, c(0.20),na.rm=T) & npct<=quantile(npct, c(0.50),na.rm=T), 1, npct>quantile(npct, c(0.50),na.rm=T) & npct<quantile(npct, c(0.80),na.rm=T), 2, npct>quantile(npct, c(0.80),na.rm=T), 3)]
   unique(dt[, c(key, 'y'), with=F]) %>% 
     merge( df[, c(key, 'alumno_id'), with=F], by = key, all.x = T) %>% 
     .[, variable := 'relacional'] %>% 
