@@ -110,10 +110,10 @@ create_creatividad <- function(df){
   
   dtm[is.na(n), n:= 0]
   
-  dtm[, y := fcase(n<=1, 0, 
-                   n<nmean & n>1, 1, 
-                   n>=nmean & n<nmax, 2, 
-                   n==nmax, 3)]
+  dtm[, y := fcase(n<=quantile(n, c(0.20),na.rm=T), 0, 
+                   n<nmean & n>quantile(n, c(0.20),na.rm=T), 1, 
+                   n>=nmean & n<quantile(n, c(0.80),na.rm=T), 2, 
+                   n>=quantile(n, c(0.80),na.rm=T), 3)]
 
   dtm[['variable']] = 'creatividad'
   dtm[, c('alumno_id', 'variable', 'y')] %>% unique() %>% .[]
